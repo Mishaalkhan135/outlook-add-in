@@ -1,9 +1,7 @@
 Office.onReady(() => {
   const reportButton = document.querySelector("#report-button");
   reportButton.addEventListener("click", sendEmail);
-
-  // Call the crypto API when the add-in loads
-  fetchCryptoData();
+  populateTable();
 });
 
 async function sendEmail() {
@@ -20,7 +18,7 @@ async function sendEmail() {
   const subject = `Report: ${item.normalizedSubject}`;
   const body = `This email was reported:\n\nSubject: ${item.normalizedSubject}\n\nFrom: ${from}`;
 
-  Office.context.mailbox.displayNewMessageForm({
+  Office.context.mailbox.item.send({
     toRecipients: ["mishaalkhan135@gmail.com"],
     ccRecipients: [],
     subject: subject,
@@ -28,25 +26,53 @@ async function sendEmail() {
   });
 }
 
-async function fetchCryptoData() {
+async function populateTable() {
   const response = await fetch("https://api.coincap.io/v2/assets");
   const data = await response.json();
-  const cryptoTable = document.querySelector("#crypto-table tbody");
 
-  data.data.forEach((crypto, index) => {
+  const tableBody = document.querySelector("#crypto-table tbody");
+
+  for (const crypto of data.data) {
     const row = document.createElement("tr");
+
     const rankCell = document.createElement("td");
-    const nameCell = document.createElement("td");
-    const priceCell = document.createElement("td");
-
-    rankCell.textContent = index + 1;
-    nameCell.textContent = crypto.name;
-    priceCell.textContent = parseFloat(crypto.priceUsd).toFixed(2);
-
+    rankCell.textContent = crypto.rank;
     row.appendChild(rankCell);
+
+    const nameCell = document.createElement("td");
+    nameCell.textContent = crypto.name;
     row.appendChild(nameCell);
+
+    const priceCell = document.createElement("td");
+    priceCell.textContent = Number(crypto.priceUsd).toFixed(2);
     row.appendChild(priceCell);
 
-    cryptoTable.appendChild(row);
-  });
+    // Add more cells for other fields here
+
+    const changePercent24HrCell = document.createElement("td");
+    changePercent24HrCell.textContent = Number(crypto.changePercent24Hr).toFixed(2) + "%";
+    row.appendChild(changePercent24HrCell);
+
+    const marketCapCell = document.createElement("td");
+    marketCapCell.textContent = Number(crypto.marketCapUsd).toFixed(2);
+    row.appendChild(marketCapCell);
+
+    const volumeCell = document.createElement("td");
+    volumeCell.textContent = Number(crypto.volumeUsd24Hr).toFixed(2);
+    row.appendChild(volumeCell);
+
+    const supplyCell = document.createElement("td");
+    supplyCell.textContent = Number(crypto.supply).toFixed(2);
+    row.appendChild(supplyCell);
+
+    const maxSupplyCell = document.createElement("td");
+    maxSupplyCell.textContent = crypto.maxSupply ? Number(crypto.maxSupply).toFixed(2) : "N/A";
+    row.appendChild(maxSupplyCell);
+
+    const circulatingSupplyCell = document.createElement("td");
+    circulatingSupplyCell.textContent = Number(crypto.circulatingSupply).toFixed(2);
+    row.appendChild(circulatingSupplyCell);
+
+    tableBody.appendChild(row);
+  }
 }
