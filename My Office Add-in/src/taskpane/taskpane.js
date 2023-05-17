@@ -1,34 +1,28 @@
-Office.onReady((info) => {
-  if (info.host === Office.HostType.Outlook) {
-    document.getElementById("sideload-msg").style.display = "none";
-    document.getElementById("app-body").style.display = "flex";
-    document.getElementById("run").onclick = sendEmail;
-  }
+// taskpane.js
+
+Office.onReady(() => {
+  const reportButton = document.querySelector("#report-button");
+  reportButton.addEventListener("click", sendEmail);
 });
 
 async function sendEmail() {
-  // Get a reference to the current message
-  var item = Office.context.mailbox.item;
+  const item = Office.context.mailbox.item;
 
-  // Create a new email
-  var email = new Office.Mailbox.EmailAddressDetails();
-  email.address = "mishaalkhan135@gmail.com";
-  email.name = "Mishaal khan";
+  let from;
+  if (item && item.from && item.from.emailAddress) {
+    from = item.from.emailAddress;
+  } else {
+    console.error("Could not access the email sender's details");
+    return;
+  }
 
-  // Create an email data object
-  var emailData = new Office.CoercionData();
-  emailData.coercionType = Office.CoercionType.Html;
+  const subject = `Report: ${item.normalizedSubject}`;
+  const body = `This email was reported:\n\nSubject: ${item.normalizedSubject}\n\nFrom: ${from}`;
 
-  // Get the body of the current email
-  item.body.getAsync(Office.CoercionType.Html, (result) => {
-    if (result.status === Office.AsyncResultStatus.Succeeded) {
-      emailData.data = item.normalizedSubject + "<br/><br/>" + result.value;
-
-      // Send the email
-      Office.context.mailbox.item.displayReplyForm({
-        htmlBody: emailData.data,
-        ccRecipients: [email],
-      });
-    }
+  Office.context.mailbox.displayNewMessageForm({
+    toRecipients: ["mishaalkhan135@gmail.com"],
+    ccRecipients: [],
+    subject: subject,
+    body: body,
   });
 }
