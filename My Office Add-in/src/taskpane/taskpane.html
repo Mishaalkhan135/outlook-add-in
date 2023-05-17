@@ -25,19 +25,40 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
       }
       #report-button {
+        margin-top: 20px;
+      }
+      #crypto-container {
+        max-height: 60vh; /* Adjust as needed */
+        overflow-y: auto;
+        width: 100%;
         margin-top: 20px;
       }
     </style>
   </head>
   <body class="ms-Fabric" dir="ltr">
-    <h3>To Send Email CLick the report button</h3>
+    <h3>To Send Email Click the report button</h3>
 
     <button id="report-button" class="ms-Button">
       <span class="ms-Button-label">Report</span>
     </button>
+
+    <h3>Crypto Rankings</h3>
+    <div id="crypto-container">
+      <table id="crypto-table" class="ms-Table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Price (USD)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be added here by JavaScript -->
+        </tbody>
+      </table>
+    </div>
 
     <script type="text/javascript" src="taskpane.js"></script>
   </body>
