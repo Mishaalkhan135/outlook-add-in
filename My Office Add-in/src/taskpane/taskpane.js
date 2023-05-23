@@ -6,7 +6,12 @@
 //==============================================================================================
 Office.onReady(() => {
   const reportButton = document.querySelector("#report-button");
-  reportButton.addEventListener("click", sendEmail);
+
+  if (!reportButton.hasAttribute("listener")) {
+    reportButton.addEventListener("click", sendEmail);
+    reportButton.setAttribute("listener", "true");
+  }
+
   populateTable();
 });
 
