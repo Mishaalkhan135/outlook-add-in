@@ -69,8 +69,7 @@
                     <SourceLocation resid="Taskpane.Url" />
                   </Action>
                 </Control>
-                <!-- Button to execute function -->
-                <!-- Button to execute function -->
+               
 <Control xsi:type="Button" id="ActionButton">
   <Label resid="ActionButton.Label" />
   <Supertip>

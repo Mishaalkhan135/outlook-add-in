@@ -11,16 +11,30 @@ Office.onReady(() => {
 });
 
 function sendEmail() {
-  Office.context.mailbox.displayNewMessageForm({
-    //to open the new email form
-    toRecipients: ["mishaalkhan135@gmail.com"], //specify the recipient email address
-    ccRecipients: [],
-    subject: "Report",
-    body:
-      "This email was reported:\n\nSubject: " +
-      Office.context.mailbox.item.subject +
-      "\n\nFrom: " +
-      Office.context.mailbox.item.from.emailAddress,
+  const emailSubject = Office.context.mailbox.item.subject;
+  const emailFrom = Office.context.mailbox.item.from.emailAddress;
+  const emailBody = Office.context.mailbox.item.body.getAsync("text", function (result) {
+    if (result.status === Office.AsyncResultStatus.Failed) {
+      console.log(result.error.message);
+    } else {
+      fetch("https://giqxzti3x1.execute-api.us-east-1.amazonaws.com/email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "mishaalkhan135@gmail.com",
+          subject: emailSubject,
+          from: emailFrom,
+          body: result.value,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
   });
 }
 
